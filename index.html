@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viaje Mental — Roguelike de Cartas</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="stylesheet" href="css/battle.css">
+</head>
+<body>
+
+    <!-- Fondo abstracto (actualizado por acto via JS) -->
+    <div id="actBg" aria-hidden="true"></div>
+
+    <div class="container">
+
+        <!-- ═══ HEADER ═══ -->
+        <div class="header">
+            <div class="beta-badge">Viaje Mental · Fase 2</div>
+            <h1 class="title">Viaje Mental</h1>
+
+            <div class="stats-grid">
+
+                <!-- Acto -->
+                <div class="stat-card">
+                    <div class="stat-icon" id="headerActIcon" style="color:var(--color-act)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <text x="12" y="16.5" text-anchor="middle" font-size="10" font-weight="800"
+                                  fill="currentColor" stroke="none" font-family="system-ui,sans-serif">1</text>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Acto</div>
+                    <div class="stat-value" id="headerAct">1/5</div>
+                </div>
+
+                <!-- Progreso -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="color:var(--color-primary)">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3"  y="15" width="4" height="6" rx="1" fill="currentColor"/>
+                            <rect x="10" y="10" width="4" height="11" rx="1" fill="currentColor" opacity="0.75"/>
+                            <rect x="17" y="5"  width="4" height="16" rx="1" fill="currentColor" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Progreso</div>
+                    <div class="stat-value" id="headerProgress">0/41</div>
+                </div>
+
+                <!-- Vida -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="color:#f87171">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6">
+                            <polyline points="2,12 5,12 7,5 9,19 11,2 13,16 15,12 22,12"/>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Vida</div>
+                    <div class="stat-value" id="headerHp">70/70</div>
+                </div>
+
+                <!-- Monedas -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="color:#fbbf24">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+                            <ellipse cx="12" cy="7"  rx="8" ry="3"/>
+                            <path d="M4 7 L4 13 Q4 16 12 16 Q20 16 20 13 L20 7"/>
+                            <ellipse cx="12" cy="13" rx="8" ry="3"/>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Monedas</div>
+                    <div class="stat-value gold" id="headerCoins">0</div>
+                </div>
+
+                <!-- Mazo -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="color:var(--text-secondary)">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="7" y="6"  width="13" height="15" rx="2" opacity="0.4"/>
+                            <rect x="5" y="4"  width="13" height="15" rx="2" opacity="0.65"/>
+                            <rect x="3" y="2"  width="13" height="15" rx="2"/>
+                        </svg>
+                    </div>
+                    <div class="stat-label">Mazo</div>
+                    <div class="stat-value" id="headerDeck">9</div>
+                </div>
+
+            </div><!-- /stats-grid -->
+
+            <!-- Artefactos equipados -->
+            <div class="artifacts-bar" id="artifactsBar">
+                <span class="no-artifacts">Sin artefactos</span>
+            </div>
+        </div><!-- /header -->
+
+
+        <!-- ═══ PANTALLA: MAPA ═══ -->
+        <div id="mapScreen" class="game-screen active">
+            <div class="act-title" id="actTitle">ACTO 1 · SOLEDAD</div>
+            <div class="map-wrapper">
+                <svg class="connections-svg" id="connectionsSvg"></svg>
+                <div class="map-container" id="mapContainer"></div>
+            </div>
+            <div class="map-hint">Elige tu camino hacia el jefe final ↓</div>
+        </div>
+
+
+        <!-- ═══ PANTALLA: COMBATE ═══ -->
+        <div id="battleScreen" class="game-screen">
+            <div class="act-title" id="battleActTitle">COMBATE</div>
+            <div class="battle-wrapper">
+
+                <div class="battle-header">
+
+                    <!-- Jugador -->
+                    <div class="character-card player-card">
+                        <div class="character-emoji">
+                            <!-- Icono abstracto del jugador: anillo simétrico -->
+                            <svg viewBox="0 0 60 60" width="60" height="60" fill="none">
+                                <circle cx="30" cy="30" r="22" stroke="#60a5fa" stroke-width="2"/>
+                                <circle cx="30" cy="30" r="12" stroke="#93c5fd" stroke-width="1.5" opacity="0.7"/>
+                                <circle cx="30" cy="30" r="5"  fill="#60a5fa" opacity="0.9"/>
+                                <circle cx="30" cy="15" r="2.5" fill="#60a5fa" opacity="0.6"/>
+                                <circle cx="30" cy="45" r="2.5" fill="#60a5fa" opacity="0.6"/>
+                                <circle cx="15" cy="30" r="2.5" fill="#60a5fa" opacity="0.6"/>
+                                <circle cx="45" cy="30" r="2.5" fill="#60a5fa" opacity="0.6"/>
+                            </svg>
+                        </div>
+                        <div class="character-name">TÚ</div>
+                        <div class="hp-container">
+                            <div class="hp-bar">
+                                <div class="hp-fill" id="playerHpBar"></div>
+                            </div>
+                            <div class="hp-text">
+                                <span id="playerHpText">70</span>/<span id="playerMaxHpText">70</span> HP
+                            </div>
+                        </div>
+                        <div class="defense-display">
+                            <svg viewBox="0 0 14 14" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" style="vertical-align:middle;margin-right:3px">
+                                <path d="M7 1 L12 3.5 L12 8 Q12 12 7 13.5 Q2 12 2 8 L2 3.5 Z"/>
+                            </svg>
+                            Defensa: <span id="playerDefenseText">0</span>
+                        </div>
+                    </div>
+
+                    <div class="vs-divider">VS</div>
+
+                    <!-- Enemigo -->
+                    <div class="character-card enemy-card">
+                        <div class="character-emoji" id="enemyEmoji">
+                            <!-- Relleno inicial; se actualiza por JS con SVG según acto -->
+                        </div>
+                        <div class="character-name" id="enemyName">Enemigo</div>
+                        <div class="hp-container">
+                            <div class="hp-bar">
+                                <div class="hp-fill enemy-fill" id="enemyHpBar"></div>
+                            </div>
+                            <div class="hp-text">
+                                <span id="enemyHpText">20</span>/<span id="enemyMaxHpText">20</span> HP
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /battle-header -->
+
+                <div class="battle-log" id="battleLog">Iniciando combate...</div>
+
+                <div class="hand-container">
+                    <div class="hand-title">
+                        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                            <circle cx="8" cy="8" r="5"/>
+                            <circle cx="8" cy="8" r="2" fill="currentColor"/>
+                        </svg>
+                        ENERGÍA: <span id="energy">3</span>
+                        <div class="energy-display" id="energyDisplay"></div>
+                    </div>
+                    <div class="cards" id="hand"></div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-end-turn" onclick="endTurn()">⏭ Pasar Turno</button>
+                    <button class="btn-back"     onclick="backToMap()">↩ Mapa</button>
+                </div>
+
+            </div>
+        </div>
+    </div><!-- /container -->
+
+
+    <!-- ═══════════ MODALES ═══════════ -->
+
+    <!-- DIÁLOGO DE JEFE -->
+    <div id="bossDialogueModal" class="modal">
+        <div class="modal-content boss-dialogue-content">
+            <div class="boss-dialogue-emoji" id="bossDialogueEmoji"></div>
+            <h2 class="boss-dialogue-name" id="bossDialogueName">Jefe</h2>
+            <p class="boss-dialogue-quote" id="bossDialogueQuote"></p>
+            <button class="btn-boss-fight" onclick="confirmBossBattle()">⚔ Enfrentarlo</button>
+        </div>
+    </div>
+
+    <!-- RECOMPENSA (victoria o evento) -->
+    <div id="victoryRewardModal" class="modal">
+        <div class="modal-content reward-content">
+            <h2>VICTORIA</h2>
+            <div class="reward-coins-text" id="rewardCoinsText">+10 monedas</div>
+            <p class="reward-prompt">Elige una carta para tu mazo:</p>
+            <div class="reward-cards" id="rewardCards"></div>
+            <button id="skipRewardBtn" onclick="skipCardReward()">Continuar sin carta →</button>
+        </div>
+    </div>
+
+    <!-- TIENDA -->
+    <div id="shopModal" class="modal">
+        <div class="modal-content shop-content">
+            <h2>TIENDA</h2>
+            <div class="shop-coins-bar">
+                Monedas disponibles: <span id="shopCoins" class="shop-coins-value">0</span>
+            </div>
+            <div class="shop-cards" id="shopCards"></div>
+            <button onclick="leaveShop()">Salir de la Tienda</button>
+        </div>
+    </div>
+
+    <!-- EVENTO -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content event-content">
+            <div class="event-icon" id="eventIcon"></div>
+            <h2 id="eventTitle">Evento</h2>
+            <p class="event-description" id="eventDescription"></p>
+            <div class="event-options" id="eventOptions"></div>
+        </div>
+    </div>
+
+    <!-- ACTO COMPLETADO -->
+    <div id="actCompleteModal" class="modal">
+        <div class="modal-content act-complete-content">
+            <div class="act-complete-emoji" id="actCompleteEmoji"></div>
+            <h2 id="actCompleteTitle">ACTO SUPERADO</h2>
+            <p class="act-complete-message" id="actCompleteMessage"></p>
+            <button onclick="proceedToNextAct()">Continuar el Viaje →</button>
+        </div>
+    </div>
+
+    <!-- DERROTA -->
+    <div id="defeatModal" class="modal">
+        <div class="modal-content defeat-content">
+            <div style="margin-bottom:16px">
+                <svg viewBox="0 0 60 60" width="64" height="64" fill="none" style="display:block;margin:0 auto">
+                    <circle cx="30" cy="30" r="26" stroke="#6b7280" stroke-width="2" stroke-dasharray="8 4"/>
+                    <line x1="20" y1="20" x2="40" y2="40" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="40" y1="20" x2="20" y2="40" stroke="#6b7280" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2>DERROTA</h2>
+            <p>Tu viaje termina aquí... pero el conocimiento permanece.</p>
+            <button onclick="location.reload()">Intentarlo de Nuevo</button>
+        </div>
+    </div>
+
+    <!-- VICTORIA FINAL -->
+    <div id="gameWinModal" class="modal">
+        <div class="modal-content game-win-content">
+            <div style="margin-bottom:16px">
+                <svg viewBox="0 0 60 60" width="72" height="72" fill="none" style="display:block;margin:0 auto">
+                    <circle cx="30" cy="30" r="26" stroke="#fbbf24" stroke-width="2"/>
+                    <circle cx="30" cy="30" r="18" stroke="#fbbf24" stroke-width="1.5" opacity="0.6"/>
+                    <circle cx="30" cy="30" r="8"  fill="#fbbf24" opacity="0.8"/>
+                    <circle cx="30" cy="10" r="3" fill="#fbbf24" opacity="0.7"/>
+                    <circle cx="30" cy="50" r="3" fill="#fbbf24" opacity="0.7"/>
+                    <circle cx="10" cy="30" r="3" fill="#fbbf24" opacity="0.7"/>
+                    <circle cx="50" cy="30" r="3" fill="#fbbf24" opacity="0.7"/>
+                </svg>
+            </div>
+            <h2>VIAJE COMPLETADO</h2>
+            <p>Has atravesado la Soledad, la Ira, la Tristeza y el Miedo.<br>
+               Ahora eres dueño de tu propio Cerebro.</p>
+            <button onclick="location.reload()">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <!-- Toast de notificaciones -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ═══ SCRIPTS ═══ -->
+    <script src="js/data/cards.js"></script>
+    <script src="js/data/enemies.js"></script>
+    <script src="js/data/acts.js"></script>
+    <script src="js/data/artifacts.js"></script>
+    <script src="js/data/events.js"></script>
+    <script src="js/svg.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/battle.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
