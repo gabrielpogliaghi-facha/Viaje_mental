@@ -59,8 +59,20 @@ function hideModal(type) {
     if (id) document.getElementById(id)?.classList.remove('show');
 }
 
+// Abrir/cerrar modal de changelog
+function toggleChangelog() {
+    const modal = document.getElementById('changelogModal');
+    if (modal.classList.contains('show')) {
+        modal.classList.remove('show');
+    } else {
+        modal.classList.add('show');
+    }
+}
+
 // Exportar funciones al scope global para el HTML
 window.selectNode = selectNode;
+window.toggleChangelog = toggleChangelog;
+window.triggerPlayerAnimation = triggerPlayerAnimation;
 window.playCard = playCard;
 window.endTurn = endTurn;
 window.backToMap = backToMap;

@@ -282,6 +282,45 @@
     <!-- Toast de notificaciones -->
     <div id="toast" class="toast"></div>
 
+    <!-- BADGE DE VERSIÓN (esquina inferior derecha) -->
+    <div id="versionBadge" class="version-badge" onclick="toggleChangelog()">
+        <svg viewBox="0 0 10 10" width="8" height="8" fill="currentColor" style="opacity:0.6">
+            <circle cx="5" cy="5" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <rect x="4.25" y="2.5" width="1.5" height="3.5" rx="0.5"/>
+            <rect x="4.25" y="7" width="1.5" height="1" rx="0.5"/>
+        </svg>
+        <span class="version-num">v2.0-beta</span>
+        <span class="version-branch" id="versionBranchTag">main</span>
+    </div>
+
+    <!-- MODAL: CHANGELOG -->
+    <div id="changelogModal" class="modal">
+        <div class="modal-content changelog-content">
+            <div class="changelog-header">
+                <div>
+                    <div class="changelog-version">v2.0-beta</div>
+                    <div class="changelog-date">Junio 2026 · Fase 2</div>
+                </div>
+                <div class="changelog-branch-pill" id="changelogBranchPill">main</div>
+            </div>
+            <ul class="changelog-list">
+                <li>20 cartas con raridades (común → épico)</li>
+                <li>10 artefactos únicos con efectos pasivos</li>
+                <li>Tienda y eventos narrativos por acto</li>
+                <li>5 jefes narrativos con diálogos de apertura</li>
+                <li>Temas visuales y fondos SVG por acto</li>
+                <li>Animaciones de combate (ataque, defensa, muerte)</li>
+                <li>Progresión lineal — el mapa no tiene retorno</li>
+            </ul>
+            <div class="changelog-actions">
+                <a class="btn-report-bug" href="https://github.com" target="_blank" rel="noopener">
+                    Reportar Bug
+                </a>
+                <button onclick="toggleChangelog()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══ SCRIPTS ═══ -->
     <script src="js/data/cards.js"></script>
     <script src="js/data/enemies.js"></script>

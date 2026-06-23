@@ -152,7 +152,16 @@ function selectNode(nodeIdx) {
     node.visited = true;
     gameState.visitedNodes.add(nodeIdx);
 
+    // Punto de no retorno: bloquear TODO excepto el camino hacia adelante
     const connections = gameState.mapNodeConnections[nodeIdx] || [];
+    const forwardSet = new Set(connections);
+
+    gameState.mapNodes.forEach((n, i) => {
+        if (i !== nodeIdx && !n.visited && !forwardSet.has(i)) {
+            n.locked = true;
+        }
+    });
+
     connections.forEach(id => {
         if (gameState.mapNodes[id]) gameState.mapNodes[id].locked = false;
     });
@@ -448,6 +457,7 @@ function playCard(cardType) {
     if (card.damage) {
         const totalDmg = card.damage + dmgBonus;
         gameState.enemy.currentHp -= totalDmg;
+        triggerPlayerAnimation('attack');
         triggerEnemyAnimation('hit');
         addLog(`✊ ${card.name}! -${totalDmg} daño`);
     }
@@ -459,6 +469,7 @@ function playCard(cardType) {
             gameState.enemy.currentHp -= hit;
             totalDmg += hit;
         });
+        triggerPlayerAnimation('attack');
         triggerEnemyAnimation('hit');
         addLog(`✊ ${card.name}! ${card.damageMulti.length}x${card.damageMulti[0] + dmgBonus} = -${totalDmg}`);
     }
@@ -466,7 +477,8 @@ function playCard(cardType) {
     if (card.defense) {
         const totalDef = card.defense + defBonus;
         gameState.playerDefense += totalDef;
-        triggerEnemyAnimation('defend'); // el enemigo retrocede al ver la defensa
+        triggerPlayerAnimation('defend');
+        triggerEnemyAnimation('defend');
         addLog(`🛡️ ${card.name}! +${totalDef} defensa`);
     }
 
@@ -523,8 +535,9 @@ function enemyTurn() {
         gameState.playerHp -= damage;
         gameState.playerDefense = 0;
 
-        // Si el ataque fue bloqueado completamente, el enemigo retrocede
-        if (damage === 0) {
+        if (damage > 0) {
+            triggerPlayerAnimation('damage');
+        } else {
             triggerEnemyAnimation('defend');
         }
 
@@ -564,8 +577,8 @@ function winBattle() {
         gameState.playerHp = Math.min(gameState.playerMaxHp, gameState.playerHp + healOnWin.effect.value);
     }
 
-    // Animación de muerte — más pausa para jefe con imagen (deja que la muerte se vea)
     triggerEnemyAnimation('die');
+    triggerPlayerAnimation('victory');
     addLog(`⭐ ¡Victoria! +${coinsEarned} monedas`);
     updateHeader();
 

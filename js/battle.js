@@ -14,6 +14,23 @@ function resetEnemyDisplay() {
     document.querySelector('.enemy-card')?.classList.remove('is-final-boss');
 }
 
+// Disparar animación de combate sobre el avatar del jugador
+function triggerPlayerAnimation(type) {
+    const el = document.querySelector('.player-card');
+    if (!el) return;
+
+    const animClasses = ['anim-attack', 'anim-defend', 'anim-damage', 'anim-victory'];
+    el.classList.remove(...animClasses);
+    void el.offsetWidth;
+
+    el.classList.add(`anim-${type}`);
+
+    if (type !== 'victory') {
+        const durations = { attack: 460, defend: 420, damage: 560 };
+        setTimeout(() => el.classList.remove(`anim-${type}`), durations[type] ?? 460);
+    }
+}
+
 // Disparar animación de combate sobre el avatar enemigo
 function triggerEnemyAnimation(type) {
     const el = document.getElementById('enemyEmoji');

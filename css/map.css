@@ -168,6 +168,34 @@
     font-weight: 600;
 }
 
+/* ═══ ANIMACIONES DE SELECCIÓN ═══ */
+
+/* Nodos disponibles: flotación pasiva sobre el ícono */
+.node:not(.locked):not(.visited) .node-icon {
+    animation: nodeFloat 3s ease-in-out infinite;
+}
+
+/* Pausa la flotación al hacer hover (el scale del nodo ya da feedback) */
+.node:hover:not(.locked):not(.visited) .node-icon {
+    animation-play-state: paused;
+}
+
+/* Glow pulsante en hover (reemplaza opacity estático) */
+.node:hover:not(.visited):not(.locked)::before {
+    opacity: 1;
+    animation: nodeGlowPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes nodeFloat {
+    0%, 100% { transform: translateY(0);   }
+    50%       { transform: translateY(-7px); }
+}
+
+@keyframes nodeGlowPulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 1;  }
+}
+
 /* ═══ ANIMACIONES ═══ */
 @keyframes boss-pulse {
     0%, 100% {

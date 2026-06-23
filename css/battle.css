@@ -53,7 +53,9 @@
     position: relative; /* necesario para animaciones de combate */
 }
 
-.character-emoji svg { animation: float 4s ease-in-out infinite; }
+/* Idle diferenciado: enemigo flota, jugador respira */
+.enemy-card  .character-emoji svg { animation: float           4s   ease-in-out infinite; }
+.player-card .character-emoji svg { animation: playerBreathing 3.5s ease-in-out infinite; }
 
 /* ─── Avatar del jefe final — imagen grande y prominente ─── */
 
@@ -77,6 +79,63 @@
 .enemy-card.is-final-boss {
     border-color: rgba(255,255,255,0.16) !important;
     box-shadow: 0 0 50px rgba(255,255,255,0.04), 0 0 100px rgba(76,154,255,0.07);
+}
+
+/* ─── Hover de tarjetas de personaje (SELECCIÓN) ──────────── */
+
+.character-card:hover { cursor: default; }
+.player-card:hover { border-color: rgba(59,130,246,0.55) !important; box-shadow: 0 0 22px rgba(59,130,246,0.12); }
+.enemy-card:hover  { border-color: rgba(239,68,68,0.55)  !important; box-shadow: 0 0 22px rgba(239,68,68,0.12); }
+
+.character-card:hover .character-emoji {
+    transform: scale(1.1) translateY(-4px);
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+    filter: brightness(1.18);
+}
+
+/* ─── JUGADOR: estados de combate ─────────────────────────── */
+
+.player-card.anim-attack  .character-emoji { animation: playerAttack  0.42s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+.player-card.anim-defend  .character-emoji { animation: playerDefend  0.38s ease-out both; }
+.player-card.anim-damage  .character-emoji { animation: playerDamage  0.52s ease-out both; }
+.player-card.anim-victory .character-emoji { animation: playerVictory 0.9s  ease-out forwards; }
+
+@keyframes playerBreathing {
+    0%, 100% { transform: scaleY(1)    translateY(0); }
+    50%       { transform: scaleY(1.06) translateY(-3px); }
+}
+
+@keyframes playerAttack {
+    0%   { transform: translateX(0)    scale(1)    rotate(0deg); }
+    35%  { transform: translateX(55px) scale(1.12) rotate(7deg); }
+    65%  { transform: translateX(24px) scale(1.06) rotate(3deg); }
+    100% { transform: translateX(0)    scale(1)    rotate(0deg); }
+}
+
+@keyframes playerDefend {
+    0%   { transform: scale(1);    filter: brightness(1); }
+    38%  { transform: scale(1.18); filter: brightness(1.55) drop-shadow(0 0 18px rgba(59,130,246,0.9)); }
+    70%  { transform: scale(1.09); filter: brightness(1.28) drop-shadow(0 0 9px rgba(59,130,246,0.55)); }
+    100% { transform: scale(1);    filter: brightness(1); }
+}
+
+@keyframes playerDamage {
+    0%   { transform: translateX(0)     rotate(0deg);    filter: brightness(1); }
+    12%  { transform: translateX(-10px) rotate(-3.5deg); filter: brightness(2.2) saturate(5) hue-rotate(310deg); }
+    28%  { transform: translateX(12px)  rotate(2.8deg);  filter: brightness(1.8) saturate(3) hue-rotate(310deg); }
+    45%  { transform: translateX(-7px)  rotate(-2deg);   filter: brightness(1.5) hue-rotate(310deg); }
+    62%  { transform: translateX(6px)   rotate(1.2deg);  filter: brightness(1.2); }
+    80%  { transform: translateX(-3px)  rotate(-0.5deg); filter: brightness(1); }
+    100% { transform: translateX(0)     rotate(0deg);    filter: brightness(1); }
+}
+
+@keyframes playerVictory {
+    0%   { transform: scale(1)    rotate(0deg);  filter: brightness(1); }
+    18%  { transform: scale(1.28) rotate(12deg); filter: brightness(1.7) drop-shadow(0 0 20px rgba(251,191,36,0.8)); }
+    36%  { transform: scale(1.12) rotate(-8deg); filter: brightness(1.4); }
+    54%  { transform: scale(1.32) rotate(10deg); filter: brightness(1.8) drop-shadow(0 0 24px rgba(251,191,36,0.9)); }
+    72%  { transform: scale(1.18) rotate(-4deg); filter: brightness(1.5); }
+    100% { transform: scale(1.22) rotate(0deg);  filter: brightness(1.3) drop-shadow(0 0 12px rgba(251,191,36,0.5)); }
 }
 
 /* ─── Clases de animación de combate ─────────────────────── */
